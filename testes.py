@@ -1,2 +1,2 @@
 import pytest
-from funcoes import *
+from servidor import *
