@@ -74,19 +74,112 @@ def test_add(mock_connect_db, client):
     
     assert response.status_code == 201
 
+    expected_response = (10, "Gabi", "Rua")
+    assert response.get_json() == expected_response
+
+@patch("servidor.connect_db")
+def test_update(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    payload = {"logradouro": "Julia", "tipo_logradouro": "Rua"}
+
+    mock_connect_db.return_value = mock_conn
+
+    response = client.put("/imoveis/9", json=payload)
+    
+    assert response.status_code == 200
+
     expected_response = {
         "imovel": {
             "id": 9,
-            "logradouro": "Gabi",
+            "logradouro": "Julia",
             "tipo_logradouro": "Rua"
         }
     }
     assert response.get_json() == expected_response
 
-# def test_update():
 
-# def test_remove():
+@patch("servidor.connect_db")
+def test_remove(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
 
-# def test_type():
+    mock_cursor.fetchall.return_value = [
+        (4, "Leri", "Rua"),
+        (8, "Carolina", "Avenida"),
+    ]
 
-# def test_city():
+    mock_connect_db.return_value = mock_conn
+
+    response = client.delete("/imoveis/8")
+
+    assert response.status_code == 200
+
+    expected_response = {"mensagem":"Apagado com sucesso"}
+    assert response.get_json() == expected_response
+
+
+@patch("servidor.connect_db")  
+def test_type(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_cursor.fetchall.return_value = [
+        (1, "Leri", "casa"),
+        (2, "Carolina", "casa"),
+        (3, "Gabi", "casa"),
+        (4, "Alvaro", "apartamento")
+        (5, "Emily", "apartamento"),
+        (6, "Rafa", "apartamento")
+    ]
+
+    mock_connect_db.return_value = mock_conn
+
+    response = client.get("/imoveis/tipo/casa")
+
+    assert response.status_code == 200
+
+    expected_response = {
+        "tipo_imovel": [
+            {"id": 1, "logradouro": "Leri", "tipo": "casa"},
+            {"id": 2, "logradouro": "Carolina", "tipo": "casa"},
+            {"id": 3, "logradouro": "Gabi", "tipo": "casa"}
+        ]
+    }
+    assert response.get_json() == expected_response
+
+
+
+@patch("servidor.connect_db")
+def test_city(mock_connect_db, client):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_cursor.fetchall.return_value = [
+        (1, "Leri", "casa","Salvador"),
+        (2, "Carolina", "casa", "São Paulo"),
+        (3, "Gabi", "casa"),
+        (4, "Alvaro", "apartamento", "Salvador")
+        (5, "Emily", "apartamento", "Taubaté"),
+        (6, "Rafa", "apartamento", "Curitiba")
+    ]
+    
+    mock_connect_db.return_value = mock_conn
+
+    response = client.get("/imoveis/cidade/salvador")
+
+    assert response.status_code == 200
+
+    expected_response = {
+        "tipo_imovel": [
+            {"id": 1, "logradouro": "Leri", "tipo_logradouro": "Rua", "cidade": "Salvador"},
+            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "cidade": "Salvador"}
+        ]
+    }
+    assert response.get_json() == expected_response
+
