@@ -87,7 +87,7 @@ def test_update(mock_connect_db, client):
 
     mock_connect_db.return_value = mock_conn
 
-    response = client.put("/imoveis/9", json=payload)
+    response = client.put("/imoveis/<int:imovel_id>", json=payload)
     
     assert response.status_code == 200
 
@@ -114,7 +114,7 @@ def test_remove(mock_connect_db, client):
 
     mock_connect_db.return_value = mock_conn
 
-    response = client.delete("/imoveis/8")
+    response = client.delete("/imoveis/<int:imovel_id>")
 
     assert response.status_code == 200
 
@@ -139,7 +139,7 @@ def test_tipo(mock_connect_db, client):
 
     mock_connect_db.return_value = mock_conn
 
-    response = client.get("/imoveis/tipo/casa")
+    response = client.get("/imoveis/tipo/<string:tipo>")
 
     assert response.status_code == 200
 
@@ -171,7 +171,7 @@ def test_city(mock_connect_db, client):
     
     mock_connect_db.return_value = mock_conn
 
-    response = client.get("/imoveis/cidade/salvador")
+    response = client.get("/imoveis/cidade<string:cidade>")
 
     assert response.status_code == 200
 
