@@ -49,7 +49,40 @@ def remove(imovel_id):
     data.commit()
     data.close()
 
-# def type():
+# DUVIDA: Oque ele quer das duas últimas funções? (filtrar ou order by) --- qualquer coisa alterar arquivo do pyteste também
 
-# def city():
+# Funções de filtro
+def tipo(tipo):
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'SELECT * FROM imoveis WHERE tipo = ? ',
+    (tipo, ))
+    imoveis_tipo = cur.fetchall()
+    return imoveis_tipo
 
+def city(cidade):
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'SELECT * FROM imoveis WHERE cidade = ? ',
+    (cidade, ))
+    imoveis_cidade = cur.fetchall()
+    return imoveis_cidade
+
+# Funções de ordem 
+def tipo():
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'SELECT * FROM imoveis ORDER BY tipo ASC ')
+    imoveis_tipo = cur.fetchall()
+    return imoveis_tipo
+
+def city():
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'SELECT * FROM imoveis ORDER BY cidade ASC ')
+    imoveis_cidade = cur.fetchall()
+    return imoveis_cidade

@@ -123,7 +123,7 @@ def test_remove(mock_connect_db, client):
 
 
 @patch("servidor.connect_db")  
-def test_type(mock_connect_db, client):
+def test_tipo(mock_connect_db, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor

@@ -1,5 +1,4 @@
 from flask import Flask, request, redirect
-import views
 import sqlite3 as sql
 # import mysql.connector   # ou o driver que você estiver usando
 
