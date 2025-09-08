@@ -31,9 +31,23 @@ def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor
     
     return novo_imovel
 
-# def update():
+def update(imovel_id, novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição):
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'UPDATE imoveis SET logradouro = ?, tipo_logradouro = ?, bairro = ?, cidade = ?, cep = ?, tipo = ?, valor = ?, data_aquisição = ? WHERE id = ? ',
+    (novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição, imovel_id))
+    data.commit()
+    data.close()
 
-# def remove():
+def remove(imovel_id):
+    data = sql.connect('imoveis.sql')
+    cur = data.cursor()
+    cur.execute(
+    'DELETE FROM imoveis WHERE id = ? ',
+    (imovel_id,))
+    data.commit()
+    data.close()
 
 # def type():
 
