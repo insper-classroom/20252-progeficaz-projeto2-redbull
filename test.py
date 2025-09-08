@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from servidor import app, connect_db
+from servidor import app, connect_sql
 from utils import *
 
 @pytest.fixture
@@ -44,7 +44,7 @@ def test_especifico(mock_connect_db, client):
 
     mock_connect_db.return_value = mock_conn
 
-    response = client.get("/imoveis/8")
+    response = client.get("/imoveis/<int:imovel_id")
 
     assert response.status_code == 200
 

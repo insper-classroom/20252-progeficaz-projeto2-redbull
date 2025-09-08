@@ -1,5 +1,8 @@
 import sqlite3 as sql
 
+def connect_sql():
+    return sql.connect("imoveis.sql")
+
 def imoveis():
     data = sql.connect('imoveis.sql')
     cur = data.cursor()

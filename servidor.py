@@ -1,40 +1,33 @@
-from flask import Flask, request, redirect
-import views
+from flask import Flask, request, redirect, jsonify
 import sqlite3 as sql
-# import mysql.connector   # ou o driver que você estiver usando
+from utils import connect_sql
 
 app = Flask(__name__)
 
-# def connect_db():
-#     """Função que retorna a conexão real com o banco."""
-#     return mysql.connector.connect(
-#         host="localhost",
-#         user="root",
-#         password="senha",
-#         database="imobiliaria"
-#     )
+@app.route("/imoveis", metthot=["GET"])
+def listar_imoveis():
+    conn = connect_sql()
+    cur = conn.cursor()
+    cur.execute("SELECT id, logradouro, tipo_logradouro FROM imoveis")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
 
-# @app.route("/imoveis/<int:imovel_id>")
-# def get_imovel(imovel_id):
-#     conn = connect_db()
-#     cursor = conn.cursor()
+    imoveis = []
+    for r in rows:
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2]}
+        imoveis.append(imovel)
 
-#     # Busca um único imóvel pelo id
-#     cursor.execute(
-#         "SELECT id, logradouro, tipo_logradouro FROM imoveis WHERE id = %s",
-#         (imovel_id,)
-#     )
-#     row = cursor.fetchone()
+    return jsonify({"todos_imoveis": imoveis}), 200
 
-#     cursor.close()
-#     conn.close()
 
-#     if row:
-#         imovel = {
-#             "id": row[0],
-#             "logradouro": row[1],
-#             "tipo_logradouro": row[2],
-#         }
-#         return jsonify({"imovel": imovel}), 200
-#     else:
-#         return jsonify({"error": "Imóvel não encontrado"}), 404
+@app.route("/imoveis/<int:imovel_id", method=["GET"])
+def get_imovel(imovel_id):
+    conn = connect_sql()
+    cur = conn.cursor()
+    cur.execute("SELECT id, logradouro, tipo_logradouro FROM imoveis WHERE id=?", (imovel_id))
+    row = cur.ferchone()
+    cur.close()
+    conn.close()
+    imovel = {"id": row[0], "logradouro": row[1], "tipo_logradouro": row[2]}
+    return jsonify({"imovel": imovel}), 200
