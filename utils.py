@@ -19,7 +19,7 @@ def especifico(imovel_id):
     return imovel_especifico
 
 def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição):
-    data = sql.connect('imoveis.db')
+    data = sql.connect('imoveis.sql')
     cur = data.cursor()
     cur.execute(
     'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição) VALUES (?,?,?,?,?,?,?,?,?)', 
