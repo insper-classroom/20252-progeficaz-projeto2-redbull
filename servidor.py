@@ -1,6 +1,9 @@
 from flask import Flask, request, redirect, jsonify
 import sqlite3 as sql
 from utils import connect_sql
+import os
+from mysql.connector import Error
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -31,3 +34,6 @@ def get_imovel(imovel_id):
     conn.close()
     imovel = {"id": row[0], "logradouro": row[1], "tipo_logradouro": row[2]}
     return jsonify({"imovel": imovel}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)
