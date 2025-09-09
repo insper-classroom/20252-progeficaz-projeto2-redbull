@@ -10,10 +10,10 @@ app = Flask(__name__)
 @app.route("/imoveis", methods=["GET"])
 def listar_imoveis():
     rows = imoveis()
-    imoveis = []
+    imoveiss = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2]}
-        imoveis.append(imovel)
+        imoveiss.append(imovel)
 
     return jsonify({"todos_imoveis": imoveis}), 200
 

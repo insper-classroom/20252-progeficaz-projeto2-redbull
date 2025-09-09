@@ -1,20 +1,44 @@
-import sqlite3 as sql
+from flask import Flask, request
+import os
+import mysql.connector
+from mysql.connector import Error
+from dotenv import load_dotenv
 
-def connect_sql():
-    return sql.connect("imoveis.sql")
+load_dotenv('.cred')
+
+config = {
+    'host': os.getenv('DB_HOST', 'localhost'),  
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),  
+    'database': os.getenv('DB_NAME', 'db_escola'),  
+    'port': int(os.getenv('DB_PORT', 3306)),  
+    'ssl_ca': os.getenv('SSL_CA_PATH')
+}
+
+def connect_db():
+    try:
+        conn = mysql.connector.connect(**config)
+        if conn.is_connected():
+            return conn
+    except Error as err:
+        print(f"Erro: {err}")
+        return None
 
 def imoveis():
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
-    cur.execute(
-    """SELECT * FROM imoveis"""
-    )
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM imoveis")
     todos_imoveis = cur.fetchall()
+    conn.close()
     return todos_imoveis
 
 def especifico(imovel_id):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'SELECT * FROM imoveis WHERE id = ? ',
     (imovel_id, ))
@@ -22,42 +46,47 @@ def especifico(imovel_id):
     return imovel_especifico
 
 def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição) VALUES (?,?,?,?,?,?,?,?,?)', 
     (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição)
     )
     novo_imovel = cur.fetchall()
-    data.commit()
-    data.close()
+    conn.commit()
+    conn.close()
     
     return novo_imovel
 
 def update(imovel_id, novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'UPDATE imoveis SET logradouro = ?, tipo_logradouro = ?, bairro = ?, cidade = ?, cep = ?, tipo = ?, valor = ?, data_aquisição = ? WHERE id = ? ',
     (novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição, imovel_id))
-    data.commit()
-    data.close()
+    conn.commit()
+    conn.close()
 
 def remove(imovel_id):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'DELETE FROM imoveis WHERE id = ? ',
     (imovel_id,))
-    data.commit()
-    data.close()
+    conn.commit()
+    conn.close()
 
-# DUVIDA: Oque ele quer das duas últimas funções? (filtrar ou order by) --- qualquer coisa alterar arquivo do pyteste também
-
-# Funções de filtro
 def tipo(tipo):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'SELECT * FROM imoveis WHERE tipo = ? ',
     (tipo, ))
@@ -65,27 +94,12 @@ def tipo(tipo):
     return imoveis_tipo
 
 def city(cidade):
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
+    conn = connect_db()
+    if conn is None:
+        return []
+    cur = conn.cursor()
     cur.execute(
     'SELECT * FROM imoveis WHERE cidade = ? ',
     (cidade, ))
-    imoveis_cidade = cur.fetchall()
-    return imoveis_cidade
-
-# Funções de ordem 
-def tipo():
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
-    cur.execute(
-    'SELECT * FROM imoveis ORDER BY tipo ASC ')
-    imoveis_tipo = cur.fetchall()
-    return imoveis_tipo
-
-def city():
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
-    cur.execute(
-    'SELECT * FROM imoveis ORDER BY cidade ASC ')
     imoveis_cidade = cur.fetchall()
     return imoveis_cidade
