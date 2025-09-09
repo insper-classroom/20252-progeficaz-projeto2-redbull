@@ -103,20 +103,3 @@ def city(cidade):
     (cidade, ))
     imoveis_cidade = cur.fetchall()
     return imoveis_cidade
-
-# Funções de ordem 
-def tipo():
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
-    cur.execute(
-    'SELECT * FROM imoveis ORDER BY tipo ASC ')
-    imoveis_tipo = cur.fetchall()
-    return imoveis_tipo
-
-def city():
-    data = sql.connect('imoveis.sql')
-    cur = data.cursor()
-    cur.execute(
-    'SELECT * FROM imoveis ORDER BY cidade ASC ')
-    imoveis_cidade = cur.fetchall()
-    return imoveis_cidade
