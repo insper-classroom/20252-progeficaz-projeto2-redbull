@@ -24,7 +24,7 @@ def connect_db():
         print(f"Erro: {err}")
         return None
 
-def imoveis():
+def todos_imoveis():
     conn = connect_db()
     if conn is None:
         return []
@@ -39,9 +39,8 @@ def especifico(imovel_id):
     if conn is None:
         return []
     cur = conn.cursor()
-    cur.execute(
-    'SELECT * FROM imoveis WHERE id = ? ',
-    (imovel_id, ))
+    cur.execute('SELECT * FROM imoveis WHERE id = %s; ', (imovel_id, ))
+    print(imovel_id)
     imovel_especifico = cur.fetchall()
     return imovel_especifico
 
@@ -51,7 +50,7 @@ def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor
         return []
     cur = conn.cursor()
     cur.execute(
-    'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição) VALUES (?,?,?,?,?,?,?,?,?)', 
+    'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)', 
     (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição)
     )
     novo_imovel = cur.fetchall()
@@ -66,7 +65,7 @@ def update(imovel_id, novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_c
         return []
     cur = conn.cursor()
     cur.execute(
-    'UPDATE imoveis SET logradouro = ?, tipo_logradouro = ?, bairro = ?, cidade = ?, cep = ?, tipo = ?, valor = ?, data_aquisição = ? WHERE id = ? ',
+    'UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisição = %s WHERE id = %s ',
     (novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição, imovel_id))
     conn.commit()
     conn.close()
@@ -77,7 +76,7 @@ def remove(imovel_id):
         return []
     cur = conn.cursor()
     cur.execute(
-    'DELETE FROM imoveis WHERE id = ? ',
+    'DELETE FROM imoveis WHERE id = %s ',
     (imovel_id,))
     conn.commit()
     conn.close()
@@ -88,7 +87,7 @@ def tipo(tipo):
         return []
     cur = conn.cursor()
     cur.execute(
-    'SELECT * FROM imoveis WHERE tipo = ? ',
+    'SELECT * FROM imoveis WHERE tipo = %s ',
     (tipo, ))
     imoveis_tipo = cur.fetchall()
     return imoveis_tipo
@@ -99,7 +98,7 @@ def city(cidade):
         return []
     cur = conn.cursor()
     cur.execute(
-    'SELECT * FROM imoveis WHERE cidade = ? ',
+    'SELECT * FROM imoveis WHERE cidade = %s ',
     (cidade, ))
     imoveis_cidade = cur.fetchall()
     return imoveis_cidade

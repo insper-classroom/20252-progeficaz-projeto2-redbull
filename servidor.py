@@ -9,11 +9,11 @@ app = Flask(__name__)
 
 @app.route("/imoveis", methods=["GET"])
 def listar_imoveis():
-    rows = imoveis()
-    imoveiss = []
+    rows = todos_imoveis()
+    imoveis = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2]}
-        imoveiss.append(imovel)
+        imoveis.append(imovel)
 
     return jsonify({"todos_imoveis": imoveis}), 200
 
@@ -23,7 +23,7 @@ def get_imovel(imovel_id):
     row = especifico(imovel_id)
     imovel = {"id": row[0][0], "logradouro": row[0][1], "tipo_logradouro": row[0][2]}
     return jsonify({"imovel": imovel}), 200
-
+    
 
 @app.route("/imoveis", methods=["POST"])
 def add_imovel():
