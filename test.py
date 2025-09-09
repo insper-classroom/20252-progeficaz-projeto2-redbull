@@ -100,7 +100,6 @@ def test_update(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
-
 @patch("servidor.connect_db")
 def test_remove(mock_connect_db, client):
     mock_conn = MagicMock()
@@ -120,7 +119,6 @@ def test_remove(mock_connect_db, client):
 
     expected_response = {"mensagem":"Apagado com sucesso"}
     assert response.get_json() == expected_response
-
 
 @patch("servidor.connect_db")  
 def test_tipo(mock_connect_db, client):
@@ -151,8 +149,6 @@ def test_tipo(mock_connect_db, client):
         ]
     }
     assert response.get_json() == expected_response
-
-
 
 @patch("servidor.connect_db")
 def test_city(mock_connect_db, client):
