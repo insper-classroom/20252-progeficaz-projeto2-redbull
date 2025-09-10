@@ -76,6 +76,7 @@ def remove_imovel(imovel_id):
 @app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
 def listar_por_tipo(tipo):
     rows = tipo(tipo)
+    imoveis = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo": r[6]}
         imoveis.append(imovel)
@@ -85,6 +86,7 @@ def listar_por_tipo(tipo):
 @app.route("/imoveis/cidade<string:cidade>", methods=["GET"])
 def listar_por_cidade(cidade):
     rows = city(cidade)
+    imoveis = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "cidade": r[4]}
         imoveis.append(imovel)
