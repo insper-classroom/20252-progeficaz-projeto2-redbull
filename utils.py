@@ -81,14 +81,14 @@ def remove(imovel_id):
     conn.commit()
     conn.close()
 
-def tipo(tipo):
+def tipo(tipo_imovel):
     conn = connect_db()
     if conn is None:
         return []
     cur = conn.cursor()
     cur.execute(
     'SELECT * FROM imoveis WHERE tipo = %s ',
-    (tipo, ))
+    (tipo_imovel, ))
     imoveis_tipo = cur.fetchall()
     return imoveis_tipo
 

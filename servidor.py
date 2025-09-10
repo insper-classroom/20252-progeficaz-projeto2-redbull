@@ -5,16 +5,6 @@ import os
 
 app = Flask(__name__)
 
-# id INTEGER PRIMARY KEY AUTO_INCREMENT,
-#     logradouro TEXT NOT NULL,
-#     tipo_logradouro TEXT,
-#     bairro TEXT,
-#     cidade TEXT NOT NULL,
-#     cep TEXT,
-#     tipo TEXT,
-#     valor REAL,
-#     data_aquisicao TEXT
-
 @app.route("/imoveis", methods=["GET"])
 def listar_imoveis():
     rows = todos_imoveis()
@@ -74,8 +64,8 @@ def remove_imovel(imovel_id):
 
 
 @app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
-def listar_por_tipo(tipo):
-    rows = tipo(tipo)
+def listar_por_tipo(tipo_imovel):
+    rows = tipo(tipo_imovel)
     imoveis = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
