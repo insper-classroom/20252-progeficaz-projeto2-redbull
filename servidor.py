@@ -78,7 +78,7 @@ def listar_por_tipo(tipo):
     rows = tipo(tipo)
     imoveis = []
     for r in rows:
-        imovel = {"id": r[0], "logradouro": r[1], "tipo": r[6]}
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
         imoveis.append(imovel)
     return jsonify({"tipo_imóvel": imoveis}), 200
     
@@ -88,7 +88,7 @@ def listar_por_cidade(cidade):
     rows = city(cidade)
     imoveis = []
     for r in rows:
-        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "cidade": r[4]}
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
         imoveis.append(imovel)
 
     return jsonify({"tipo_imovel": imoveis}), 200
