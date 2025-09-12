@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from servidor import app
 
 @pytest.fixture
@@ -71,3 +71,19 @@ def test_city(mock_filtro_city, client):
     response = client.get("/imoveis/cidade/Salvador")
     assert response.status_code == 200
     assert all(im["cidade"] == "Salvador" for im in response.get_json()["tipo_imovel"])
+
+@patch("servidor.connect_db")
+def test_erro(mock_connect_db, client):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_cursor.fetchall.return_value = []
+
+    mock_connect_db.return_value = mock_conn
+
+    response = client.get("/imoveis")
+
+    assert response.status_code == 404
+    assert response.get_json() == {"erro": "Nenhum imóvel encontrado"}

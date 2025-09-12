@@ -19,7 +19,6 @@ def listar_imoveis():
 
     return jsonify({"todos_imoveis": imoveis}), 200
 
-
 @app.route("/imoveis/<int:imovel_id>", methods=["GET"])
 def get_imovel(imovel_id):
     row = especifico(imovel_id)
