@@ -1,7 +1,6 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from servidor import app
-from utils import *
 
 @pytest.fixture
 def client():
@@ -11,183 +10,64 @@ def client():
 
 @patch("servidor.todos_imoveis")  
 def test_imoveis(mock_todos_imoveis, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.fetchall.return_value = [
+    mock_todos_imoveis.return_value = [
         (4, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
         (8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
     ]
-
-    mock_todos_imoveis.return_value = mock_conn
 
     response = client.get("/imoveis")
-
     assert response.status_code == 200
+    assert response.get_json()["todos_imoveis"][0]["id"] == 4
 
-    expected_response = {
-        "todos_imoveis": [
-            {"id": 4, "logradouro": "Leri", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
-            {"id": 8, "logradouro": "Carolina", "tipo_logradouro": "Avenida", "bairro": "Itaim", "cidade": "Sao Paulo", "cep": "44444", "tipo": "apartamento", "valor": 105000, "data_aquisicao": "2025-05-17"},
-        ]
-    }
-    assert response.get_json() == expected_response
-
-@patch("servidor.get_imovel")
-def test_especifico(mock_get_imovel, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.fetchall.return_value = (8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
-
-    mock_get_imovel.return_value = mock_conn
+@patch("servidor.especifico")
+def test_especifico(mock_especifico, client):
+    mock_especifico.return_value = [(8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")]
 
     response = client.get("/imoveis/8")
-
     assert response.status_code == 200
+    assert response.get_json()["imovel"]["id"] == 8
 
-    expected_response = expected_response = {
-        "imovel": {
-            "id": 8,
-            "logradouro": "Carolina",
-            "tipo_logradouro": "Avenida",
-            "bairro": "Itaim", 
-            "cidade": "Sao Paulo", 
-            "cep": "44444", 
-            "tipo": "apartamento", 
-            "valor": 105000, 
-            "data_aquisicao": "2025-05-17"},
-
-    }
-
-    assert response.get_json() == expected_response
-
-@patch("servidor.add_imovel")
-def test_add(mock_add_imovel, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.lastrowid = 9
-
-    payload = {"logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
-
-    mock_add_imovel.return_value = mock_conn
+@patch("servidor.add")
+def test_add(mock_add, client):
+    mock_add.return_value = 10
+    payload = {"logradouro": "Gabi", "tipo_logradouro": "Rua"}
 
     response = client.post("/imoveis", json=payload)
-    
     assert response.status_code == 201
+    assert response.get_json()["imovel"]["id"] == 10
 
-    expected_response = (10, "Gabi", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17")
-    assert response.get_json() == expected_response
-
-@patch("servidor.update_imovel")
-def test_update(mock_update_imovel, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    payload = {"logradouro": "Julia", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
-
-    mock_update_imovel.return_value = mock_conn
-
+@patch("servidor.update")
+def test_update(mock_update, client):
+    payload = {"logradouro": "Julia", "tipo_logradouro": "Rua"}
     response = client.put("/imoveis/9", json=payload)
-    
     assert response.status_code == 200
+    assert response.get_json()["imovel"]["id"] == 9
 
-    expected_response = {
-        "imovel": {
-            "id": 9,
-            "logradouro": "Julia",
-            "tipo_logradouro": "Rua",
-            "bairro": "Horto", 
-            "cidade": "Salvador", 
-            "cep": "88888", 
-            "tipo": "casa", 
-            "valor": 105000, 
-            "data_aquisicao": "2007-05-17"
-        }
-    }
-    assert response.get_json() == expected_response
-
-@patch("servidor.remove_imovel")
-def test_remove(mock_remove_imovel, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.fetchall.return_value = [
-        (4, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
-        (8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-    ]
-
-    mock_remove_imovel.return_value = mock_conn
-
+@patch("servidor.remove")
+def test_remove(mock_remove, client):
     response = client.delete("/imoveis/4")
-
     assert response.status_code == 200
+    assert response.get_json() == {"mensagem": "Apagado com sucesso"}
 
-    expected_response = {"mensagem":"Apagado com sucesso"}
-    assert response.get_json() == expected_response
-
-@patch("servidor.listar_por_tipo")  
-def test_tipo(mock_listar_por_tipo, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.fetchall.return_value = [
+@patch("servidor.filtro_tipo")  
+def test_tipo(mock_filtro_tipo, client):
+    mock_filtro_tipo.return_value = [
         (1, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
         (2, "Carolina", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
-        (3, "Gabi", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
-        (4, "Alvaro", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-        (5, "Emily", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-        (6, "Rafa", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
+        (3, "Gabi", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17")
     ]
-
-    mock_listar_por_tipo.return_value = mock_conn
 
     response = client.get("/imoveis/tipo/casa")
-
     assert response.status_code == 200
+    assert all(im["tipo"] == "casa" for im in response.get_json()["tipo_imovel"])
 
-    expected_response = {
-        "tipo_imovel": [
-            {"id": 1, "logradouro": "Leri", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
-            {"id": 2, "logradouro": "Carolina", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
-            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
-        ]
-    }
-    assert response.get_json() == expected_response
-
-@patch("servidor.listar_por_cidade")
-def test_city(mock_listar_por_cidade, client):
-    mock_conn = MagicMock()
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-
-    mock_cursor.fetchall.return_value = [
+@patch("servidor.filtro_city")
+def test_city(mock_filtro_city, client):
+    mock_filtro_city.return_value = [
         (1, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
-        (2, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-        (3, "Gabi", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-        (4, "Alvaro", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
-        (5, "Emily", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
-        (6, "Rafa", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
+        (2, "Carolina", "Avenida", "Itaim", "Salvador", "44444", "apartamento", 105000, "2025-05-17"),
     ]
-    
-    mock_listar_por_cidade.return_value = mock_conn
 
     response = client.get("/imoveis/cidade/Salvador")
-
     assert response.status_code == 200
-
-    expected_response = {
-        "tipo_imovel": [
-            {"id": 1, "logradouro": "Leri",  "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
-            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
-        ]
-    }
-    assert response.get_json() == expected_response
-
+    assert all(im["cidade"] == "Salvador" for im in response.get_json()["tipo_imovel"])

@@ -60,7 +60,7 @@ def update_imovel(imovel_id):
 @app.route("/imoveis/<int:imovel_id>", methods=["DELETE"])
 def remove_imovel(imovel_id):
     remove(imovel_id)
-    return jsonify({"mensagem": "apagado com sucesso"}), 200
+    return jsonify({"mensagem": "Apagado com sucesso"}), 200
 
 
 @app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
@@ -70,10 +70,10 @@ def listar_por_tipo(tipo):
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
         imoveis.append(imovel)
-    return jsonify({"tipo_imóvel": imoveis}), 200
+    return jsonify({"tipo_imovel": imoveis}), 200
     
 
-@app.route("/imoveis/cidade<string:cidade>", methods=["GET"])
+@app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
 def listar_por_cidade(cidade):
     rows = filtro_city(cidade)
     imoveis = []

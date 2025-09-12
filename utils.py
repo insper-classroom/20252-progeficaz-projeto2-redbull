@@ -1,4 +1,3 @@
-from flask import Flask, request
 import os
 import mysql.connector
 from mysql.connector import Error
@@ -40,33 +39,32 @@ def especifico(imovel_id):
         return []
     cur = conn.cursor()
     cur.execute('SELECT * FROM imoveis WHERE id = %s; ', (imovel_id, ))
-    print(imovel_id)
     imovel_especifico = cur.fetchall()
     return imovel_especifico
 
-def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição):
+def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao):
     conn = connect_db()
     if conn is None:
         return []
     cur = conn.cursor()
     cur.execute(
-    'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)', 
-    (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisição)
+    'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)', 
+    (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
     )
-    novo_imovel = cur.fetchall()
     conn.commit()
+    novo_id = cur.lastrowid
     conn.close()
     
-    return novo_imovel
+    return novo_id
 
-def update(imovel_id, novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição):
+def update(imovel_id, novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisicao):
     conn = connect_db()
     if conn is None:
         return []
     cur = conn.cursor()
     cur.execute(
-    'UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisição = %s WHERE id = %s ',
-    (novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisição, imovel_id))
+    'UPDATE imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s ',
+    (novo_logradouro, novo_tipo_logradouro, novo_bairro, novo_cidade, novo_cep, novo_tipo, novo_valor, novo_data_aquisicao, imovel_id))
     conn.commit()
     conn.close()
 
