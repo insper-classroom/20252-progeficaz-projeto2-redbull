@@ -40,7 +40,7 @@ def test_especifico(mock_get_imovel, client):
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
 
-    mock_cursor.fetchall.return_value = (8, "Carolina", "Avenida")
+    mock_cursor.fetchall.return_value = (8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
 
     mock_get_imovel.return_value = mock_conn
 
@@ -52,8 +52,14 @@ def test_especifico(mock_get_imovel, client):
         "imovel": {
             "id": 8,
             "logradouro": "Carolina",
-            "tipo_logradouro": "Avenida"
-        }
+            "tipo_logradouro": "Avenida",
+            "bairro": "Itaim", 
+            "cidade": "Sao Paulo", 
+            "cep": "44444", 
+            "tipo": "apartamento", 
+            "valor": 105000, 
+            "data_aquisicao": "2025-05-17"},
+
     }
 
     assert response.get_json() == expected_response
@@ -66,7 +72,7 @@ def test_add(mock_add_imovel, client):
 
     mock_cursor.lastrowid = 9
 
-    payload = {"logradouro": "Gabi", "tipo_logradouro": "Rua"}
+    payload = {"logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
 
     mock_add_imovel.return_value = mock_conn
 
@@ -74,7 +80,7 @@ def test_add(mock_add_imovel, client):
     
     assert response.status_code == 201
 
-    expected_response = (10, "Gabi", "Rua")
+    expected_response = (10, "Gabi", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17")
     assert response.get_json() == expected_response
 
 @patch("servidor.update_imovel")
@@ -83,7 +89,7 @@ def test_update(mock_update_imovel, client):
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
 
-    payload = {"logradouro": "Julia", "tipo_logradouro": "Rua"}
+    payload = {"logradouro": "Julia", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
 
     mock_update_imovel.return_value = mock_conn
 
@@ -95,7 +101,13 @@ def test_update(mock_update_imovel, client):
         "imovel": {
             "id": 9,
             "logradouro": "Julia",
-            "tipo_logradouro": "Rua"
+            "tipo_logradouro": "Rua",
+            "bairro": "Horto", 
+            "cidade": "Salvador", 
+            "cep": "88888", 
+            "tipo": "casa", 
+            "valor": 105000, 
+            "data_aquisicao": "2007-05-17"
         }
     }
     assert response.get_json() == expected_response
@@ -107,8 +119,8 @@ def test_remove(mock_remove_imovel, client):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [
-        (4, "Leri", "Rua"),
-        (8, "Carolina", "Avenida"),
+        (4, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (8, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
     ]
 
     mock_remove_imovel.return_value = mock_conn
@@ -127,12 +139,12 @@ def test_tipo(mock_listar_por_tipo, client):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [
-        (1, "Leri", "casa"),
-        (2, "Carolina", "casa"),
-        (3, "Gabi", "casa"),
-        (4, "Alvaro", "apartamento"),
-        (5, "Emily", "apartamento"),
-        (6, "Rafa", "apartamento")
+        (1, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (2, "Carolina", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (3, "Gabi", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (4, "Alvaro", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
+        (5, "Emily", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
+        (6, "Rafa", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
     ]
 
     mock_listar_por_tipo.return_value = mock_conn
@@ -143,9 +155,9 @@ def test_tipo(mock_listar_por_tipo, client):
 
     expected_response = {
         "tipo_imovel": [
-            {"id": 1, "logradouro": "Leri", "tipo": "casa"},
-            {"id": 2, "logradouro": "Carolina", "tipo": "casa"},
-            {"id": 3, "logradouro": "Gabi", "tipo": "casa"}
+            {"id": 1, "logradouro": "Leri", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
+            {"id": 2, "logradouro": "Carolina", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
+            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
         ]
     }
     assert response.get_json() == expected_response
@@ -157,12 +169,12 @@ def test_city(mock_listar_por_cidade, client):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [
-        (1, "Leri", "casa","Salvador"),
-        (2, "Carolina", "casa", "São Paulo"),
-        (3, "Gabi", "casa"),
-        (4, "Alvaro", "apartamento", "Salvador"),
-        (5, "Emily", "apartamento", "Taubaté"),
-        (6, "Rafa", "apartamento", "Curitiba")
+        (1, "Leri", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (2, "Carolina", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
+        (3, "Gabi", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
+        (4, "Alvaro", "Rua", "Horto", "Salvador", "88888", "casa", 105000, "2007-05-17"),
+        (5, "Emily", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17"),
+        (6, "Rafa", "Avenida", "Itaim", "Sao Paulo", "44444", "apartamento", 105000, "2025-05-17")
     ]
     
     mock_listar_por_cidade.return_value = mock_conn
@@ -173,8 +185,8 @@ def test_city(mock_listar_por_cidade, client):
 
     expected_response = {
         "tipo_imovel": [
-            {"id": 1, "logradouro": "Leri", "tipo_logradouro": "Rua", "cidade": "Salvador"},
-            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "cidade": "Salvador"}
+            {"id": 1, "logradouro": "Leri",  "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"},
+            {"id": 3, "logradouro": "Gabi", "tipo_logradouro": "Rua", "bairro": "Horto", "cidade": "Salvador", "cep": "88888", "tipo": "casa", "valor": 105000, "data_aquisicao": "2007-05-17"}
         ]
     }
     assert response.get_json() == expected_response
