@@ -8,9 +8,13 @@ app = Flask(__name__)
 @app.route("/imoveis", methods=["GET"])
 def listar_imoveis():
     rows = todos_imoveis()
+
+    if not rows:
+        return jsonify({"erro": "Nenhum imóvel encontrado"}), 404
+
     imoveis = []
     for r in rows:
-        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8], "editar": f"/imoveis/{r[0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{r[0]}"}
         imoveis.append(imovel)
 
     return jsonify({"todos_imoveis": imoveis}), 200
@@ -19,7 +23,11 @@ def listar_imoveis():
 @app.route("/imoveis/<int:imovel_id>", methods=["GET"])
 def get_imovel(imovel_id):
     row = especifico(imovel_id)
-    imovel = {"id": row[0][0], "logradouro": row[0][1], "tipo_logradouro": row[0][2], "bairro": row[0][3], "cidade": row[0][4], "cep": row[0][5], "tipo": row[0][6], "valor": row[0][7], "data_aquisicao": row[0][8]}
+
+    if not row:
+        return jsonify({"erro": f"Imóvel com id {imovel_id} não encontrado"}), 404
+
+    imovel = {"id": row[0][0], "logradouro": row[0][1], "tipo_logradouro": row[0][2], "bairro": row[0][3], "cidade": row[0][4], "cep": row[0][5], "tipo": row[0][6], "valor": row[0][7], "data_aquisicao": row[0][8], "editar": f"/imoveis/{row[0][0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{row[0][0]}"}
     return jsonify({"imovel": imovel}), 200
     
 
@@ -38,7 +46,9 @@ def add_imovel():
 
     novo_id = add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
 
-    return jsonify({"imovel": {"id": novo_id, "logradouro": logradouro, "tipo_logradouro": tipo_logradouro, "bairro": bairro, "cidade": cidade, "cep": cep, "tipo": tipo, "valor": valor, "data_aquisicao": data_aquisicao}}), 201
+    return jsonify({
+        "imovel": {"id": novo_id, "logradouro": logradouro, "tipo_logradouro": tipo_logradouro, "bairro": bairro, "cidade": cidade, "cep": cep, "tipo": tipo, "valor": valor, "data_aquisicao": data_aquisicao, "editar": f"/imoveis/{novo_id}", "adicionar": "/imoveis", "deletar": f"/imoveis/{novo_id}"}
+    }), 201
 
 
 @app.route("/imoveis/<int:imovel_id>", methods=["PUT"])
@@ -52,9 +62,12 @@ def update_imovel(imovel_id):
     tipo = data.get("tipo")
     valor = data.get("valor")
     data_aquisicao = data.get("data_aquisicao")
+
     update(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
     
-    return jsonify({"imovel": {"id": imovel_id, "logradouro": logradouro, "tipo_logradouro": tipo_logradouro, "bairro": bairro, "cidade": cidade, "cep": cep, "tipo": tipo, "valor": valor, "data_aquisicao": data_aquisicao}}), 200
+    return jsonify({
+        "imovel": {"id": imovel_id, "logradouro": logradouro, "tipo_logradouro": tipo_logradouro, "bairro": bairro, "cidade": cidade, "cep": cep, "tipo": tipo, "valor": valor, "data_aquisicao": data_aquisicao, "editar": f"/imoveis/{imovel_id}", "adicionar": "/imoveis", "deletar": f"/imoveis/{imovel_id}"}
+    }), 200
 
 
 @app.route("/imoveis/<int:imovel_id>", methods=["DELETE"])
@@ -66,9 +79,13 @@ def remove_imovel(imovel_id):
 @app.route("/imoveis/tipo/<string:tipo>", methods=["GET"])
 def listar_por_tipo(tipo):
     rows = filtro_tipo(tipo)
+
+    if not rows:
+        return jsonify({"erro": f"Não há imóveis do tipo '{tipo}'"}), 404
+
     imoveis = []
     for r in rows:
-        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8], "editar": f"/imoveis/{r[0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{r[0]}"}
         imoveis.append(imovel)
     return jsonify({"tipo_imovel": imoveis}), 200
     
@@ -76,9 +93,13 @@ def listar_por_tipo(tipo):
 @app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
 def listar_por_cidade(cidade):
     rows = filtro_city(cidade)
+
+    if not rows:
+        return jsonify({"erro": f"Não há imóveis na cidade '{cidade}'"}), 404
+
     imoveis = []
     for r in rows:
-        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8]}
+        imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8], "editar": f"/imoveis/{r[0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{r[0]}"}
         imoveis.append(imovel)
 
     return jsonify({"tipo_imovel": imoveis}), 200
