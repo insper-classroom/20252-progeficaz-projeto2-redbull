@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from servidor import app, connect_sql
+from servidor import app
 from utils import *
 
 @pytest.fixture
@@ -9,8 +9,8 @@ def client():
     with app.test_client() as client:
         yield client
 
-@patch("servidor.connect_db")  
-def test_imoveis(mock_connect_db, client):
+@patch("servidor.todos_imoveis")  
+def test_imoveis(mock_todos_imoveis, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
@@ -20,7 +20,7 @@ def test_imoveis(mock_connect_db, client):
         (8, "Carolina", "Avenida"),
     ]
 
-    mock_connect_db.return_value = mock_conn
+    mock_todos_imoveis.return_value = mock_conn
 
     response = client.get("/imoveis")
 
@@ -34,17 +34,17 @@ def test_imoveis(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")
-def test_especifico(mock_connect_db, client):
+@patch("servidor.get_imovel")
+def test_especifico(mock_get_imovel, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = (8, "Carolina", "Avenida")
 
-    mock_connect_db.return_value = mock_conn
+    mock_get_imovel.return_value = mock_conn
 
-    response = client.get("/imoveis/<int:imovel_id")
+    response = client.get("/imoveis/8")
 
     assert response.status_code == 200
 
@@ -58,8 +58,8 @@ def test_especifico(mock_connect_db, client):
 
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")
-def test_add(mock_connect_db, client):
+@patch("servidor.add_imovel")
+def test_add(mock_add_imovel, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
@@ -68,7 +68,7 @@ def test_add(mock_connect_db, client):
 
     payload = {"logradouro": "Gabi", "tipo_logradouro": "Rua"}
 
-    mock_connect_db.return_value = mock_conn
+    mock_add_imovel.return_value = mock_conn
 
     response = client.post("/imoveis", json=payload)
     
@@ -77,17 +77,17 @@ def test_add(mock_connect_db, client):
     expected_response = (10, "Gabi", "Rua")
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")
-def test_update(mock_connect_db, client):
+@patch("servidor.update_imovel")
+def test_update(mock_update_imovel, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
 
     payload = {"logradouro": "Julia", "tipo_logradouro": "Rua"}
 
-    mock_connect_db.return_value = mock_conn
+    mock_update_imovel.return_value = mock_conn
 
-    response = client.put("/imoveis/<int:imovel_id>", json=payload)
+    response = client.put("/imoveis/9", json=payload)
     
     assert response.status_code == 200
 
@@ -100,8 +100,8 @@ def test_update(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")
-def test_remove(mock_connect_db, client):
+@patch("servidor.remove_imovel")
+def test_remove(mock_remove_imovel, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
@@ -111,17 +111,17 @@ def test_remove(mock_connect_db, client):
         (8, "Carolina", "Avenida"),
     ]
 
-    mock_connect_db.return_value = mock_conn
+    mock_remove_imovel.return_value = mock_conn
 
-    response = client.delete("/imoveis/<int:imovel_id>")
+    response = client.delete("/imoveis/4")
 
     assert response.status_code == 200
 
     expected_response = {"mensagem":"Apagado com sucesso"}
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")  
-def test_tipo(mock_connect_db, client):
+@patch("servidor.listar_por_tipo")  
+def test_tipo(mock_listar_por_tipo, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
@@ -130,14 +130,14 @@ def test_tipo(mock_connect_db, client):
         (1, "Leri", "casa"),
         (2, "Carolina", "casa"),
         (3, "Gabi", "casa"),
-        (4, "Alvaro", "apartamento")
+        (4, "Alvaro", "apartamento"),
         (5, "Emily", "apartamento"),
         (6, "Rafa", "apartamento")
     ]
 
-    mock_connect_db.return_value = mock_conn
+    mock_listar_por_tipo.return_value = mock_conn
 
-    response = client.get("/imoveis/tipo/<string:tipo>")
+    response = client.get("/imoveis/tipo/casa")
 
     assert response.status_code == 200
 
@@ -150,8 +150,8 @@ def test_tipo(mock_connect_db, client):
     }
     assert response.get_json() == expected_response
 
-@patch("servidor.connect_db")
-def test_city(mock_connect_db, client):
+@patch("servidor.listar_por_cidade")
+def test_city(mock_listar_por_cidade, client):
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
@@ -160,14 +160,14 @@ def test_city(mock_connect_db, client):
         (1, "Leri", "casa","Salvador"),
         (2, "Carolina", "casa", "São Paulo"),
         (3, "Gabi", "casa"),
-        (4, "Alvaro", "apartamento", "Salvador")
+        (4, "Alvaro", "apartamento", "Salvador"),
         (5, "Emily", "apartamento", "Taubaté"),
         (6, "Rafa", "apartamento", "Curitiba")
     ]
     
-    mock_connect_db.return_value = mock_conn
+    mock_listar_por_cidade.return_value = mock_conn
 
-    response = client.get("/imoveis/cidade<string:cidade>")
+    response = client.get("/imoveis/cidade/Salvador")
 
     assert response.status_code == 200
 
