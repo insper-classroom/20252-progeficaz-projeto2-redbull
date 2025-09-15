@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, jsonify
 import sqlite3 as sql
 from utils import *
-import os
 
 app = Flask(__name__)
 
