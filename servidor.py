@@ -9,7 +9,7 @@ def listar_imoveis():
     rows = todos_imoveis()
 
     if not rows:
-        return jsonify({"erro": "Nenhum imóvel encontrado"}), 404
+        return jsonify({"erro": "Nenhum imovel encontrado"}), 404
 
     imoveis = []
     for r in rows:
@@ -23,7 +23,7 @@ def get_imovel(imovel_id):
     row = especifico(imovel_id)
 
     if not row:
-        return jsonify({"erro": f"Imóvel com id {imovel_id} não encontrado"}), 404
+        return jsonify({"erro": f"Imovel com id {imovel_id} nao encontrado"}), 404
 
     imovel = {"id": row[0][0], "logradouro": row[0][1], "tipo_logradouro": row[0][2], "bairro": row[0][3], "cidade": row[0][4], "cep": row[0][5], "tipo": row[0][6], "valor": row[0][7], "data_aquisicao": row[0][8], "editar": f"/imoveis/{row[0][0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{row[0][0]}"}
     return jsonify({"imovel": imovel}), 200
@@ -79,7 +79,7 @@ def listar_por_tipo(tipo):
     rows = filtro_tipo(tipo)
 
     if not rows:
-        return jsonify({"erro": f"Não há imóveis do tipo '{tipo}'"}), 404
+        return jsonify({"erro": f"Nao há imoveis do tipo '{tipo}'"}), 404
 
     imoveis = []
     for r in rows:
@@ -93,7 +93,7 @@ def listar_por_cidade(cidade):
     rows = filtro_city(cidade)
 
     if not rows:
-        return jsonify({"erro": f"Não há imóveis na cidade '{cidade}'"}), 404
+        return jsonify({"erro": f"Nao ha imoveis na cidade '{cidade}'"}), 404
 
     imoveis = []
     for r in rows:
