@@ -8,13 +8,15 @@ app = Flask(__name__)
 def listar_imoveis():
     rows = todos_imoveis()
 
-    if not rows:
-        return jsonify({"erro": "Nenhum imovel encontrado"}), 404
+    
 
     imoveis = []
     for r in rows:
         imovel = {"id": r[0], "logradouro": r[1], "tipo_logradouro": r[2], "bairro": r[3], "cidade": r[4], "cep": r[5], "tipo": r[6], "valor": r[7], "data_aquisicao": r[8], "editar": f"/imoveis/{r[0]}", "adicionar": "/imoveis", "deletar": f"/imoveis/{r[0]}"}
         imoveis.append(imovel)
+    if len(imoveis) == 0:
+        return jsonify({"erro": "Nenhum imovel encontrado"}), 404
+    
 
     return jsonify({"todos_imoveis": imoveis}), 200
 
