@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, jsonify
 import sqlite3 as sql
 from utils import *
 
@@ -23,7 +23,9 @@ def listar_imoveis():
         acoes = {
             "editar": f"/imoveis/{r[0]}",
             "adicionar": "/imoveis",
-            "deletar": f"/imoveis/{r[0]}"
+            "deletar": f"/imoveis/{r[0]}",
+            "filtrar_por_cidade": f"/imoveis/cidade/{r[4]}",
+            "filtrar_por_tipo": f"/imoveis/tipo/{r[6]}"
         }
         imoveis.append({"imovel": imovel, "acoes": acoes})
     if len(imoveis) == 0:
@@ -50,7 +52,9 @@ def get_imovel(imovel_id):
     acoes = {
         "editar": f"/imoveis/{row[0][0]}",
         "adicionar": "/imoveis",
-        "deletar": f"/imoveis/{row[0][0]}"
+        "deletar": f"/imoveis/{row[0][0]}",
+        "filtrar_por_cidade": f"/imoveis/cidade/{row[0][4]}",
+        "filtrar_por_tipo": f"/imoveis/tipo/{row[0][6]}"
     }
     return jsonify({"imovel": imovel, "acoes": acoes}), 200
 
@@ -83,7 +87,9 @@ def add_imovel():
     acoes = {
         "editar": f"/imoveis/{novo_id}",
         "adicionar": "/imoveis",
-        "deletar": f"/imoveis/{novo_id}"
+        "deletar": f"/imoveis/{novo_id}",
+        "filtrar_por_cidade": f"/imoveis/cidade/{cidade}",
+        "filtrar_por_tipo": f"/imoveis/tipo/{tipo}"
     }
     return jsonify({"imovel": imovel, "acoes": acoes}), 201
 
@@ -116,7 +122,9 @@ def update_imovel(imovel_id):
     acoes = {
         "editar": f"/imoveis/{imovel_id}",
         "adicionar": "/imoveis",
-        "deletar": f"/imoveis/{imovel_id}"
+        "deletar": f"/imoveis/{imovel_id}",
+        "filtrar_por_cidade": f"/imoveis/cidade/{cidade}",
+        "filtrar_por_tipo": f"/imoveis/tipo/{tipo}"
     }
     return jsonify({"imovel": imovel, "acoes": acoes}), 200
 
@@ -151,7 +159,9 @@ def listar_por_tipo(tipo):
         acoes = {
             "editar": f"/imoveis/{r[0]}",
             "adicionar": "/imoveis",
-            "deletar": f"/imoveis/{r[0]}"
+            "deletar": f"/imoveis/{r[0]}",
+            "filtrar_por_cidade": f"/imoveis/cidade/{r[4]}",
+            "filtrar_por_tipo": f"/imoveis/tipo/{r[6]}"
         }
         imoveis.append({"imovel": imovel, "acoes": acoes})
     return jsonify({"tipo_imovel": imoveis}), 200
@@ -178,7 +188,9 @@ def listar_por_cidade(cidade):
         acoes = {
             "editar": f"/imoveis/{r[0]}",
             "adicionar": "/imoveis",
-            "deletar": f"/imoveis/{r[0]}"
+            "deletar": f"/imoveis/{r[0]}",
+            "filtrar_por_cidade": f"/imoveis/cidade/{r[4]}",
+            "filtrar_por_tipo": f"/imoveis/tipo/{r[6]}"
         }
         imoveis.append({"imovel": imovel, "acoes": acoes})
     return jsonify({"cidade_imoveis": imoveis}), 200
