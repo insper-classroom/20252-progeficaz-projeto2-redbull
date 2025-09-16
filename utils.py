@@ -42,14 +42,14 @@ def especifico(imovel_id):
     imovel_especifico = cur.fetchall()
     return imovel_especifico
 
-def add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao):
+def add(logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao):
     conn = connect_db()
     if conn is None:
         return []
     cur = conn.cursor()
     cur.execute(
-    'INSERT INTO imoveis (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)', 
-    (imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
+    'INSERT INTO imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)', 
+    (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
     )
     conn.commit()
     novo_id = cur.lastrowid

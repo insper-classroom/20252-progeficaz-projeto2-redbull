@@ -32,7 +32,6 @@ def get_imovel(imovel_id):
 @app.route("/imoveis", methods=["POST"])
 def add_imovel():
     data = request.get_json()
-    imovel_id = data.get("id")
     logradouro = data.get("logradouro")
     tipo_logradouro = data.get("tipo_logradouro")
     bairro = data.get("bairro")
@@ -42,7 +41,7 @@ def add_imovel():
     valor = data.get("valor")
     data_aquisicao = data.get("data_aquisicao")
 
-    novo_id = add(imovel_id, logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
+    novo_id = add(logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao)
 
     return jsonify({
         "imovel": {"id": novo_id, "logradouro": logradouro, "tipo_logradouro": tipo_logradouro, "bairro": bairro, "cidade": cidade, "cep": cep, "tipo": tipo, "valor": valor, "data_aquisicao": data_aquisicao, "editar": f"/imoveis/{novo_id}", "adicionar": "/imoveis", "deletar": f"/imoveis/{novo_id}"}
